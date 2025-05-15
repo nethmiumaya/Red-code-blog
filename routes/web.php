@@ -1,47 +1,32 @@
 <?php
 
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PostController;
+
+use App\Http\Controllers\Backend\CommunityController;
+use App\Http\Controllers\Backend\CommunityPostController;
+use App\Http\Controllers\Backend\PostVoteController;
+use App\Http\Controllers\Frontend\CommunityController as FrontendCommunityController;
+use App\Http\Controllers\Frontend\PostCommentController;
+use App\Http\Controllers\Frontend\PostController;
+use App\Http\Controllers\Frontend\WelcomeController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-require __DIR__.'/auth.php';
+use Inertia\Inertia;
 
 
-//Guest routes
-Route::middleware('remembercachekeys')->get('/', [BlogController::class, 'index'])->name('home');
+Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
 
+Route::get('/r/{slug}', [FrontendCommunityController::class, 'show'])->name('frontend.communities.show');
+Route::get('/r/{community_slug}/posts/{post:slug}', [PostController::class, 'show'])->name('frontend.communities.posts.show');
+Route::post('/r/{community_slug}/posts/{post:slug}/comments', [PostCommentController::class, 'store'])->name('frontend.posts.comments');
 
-
-//Authenticated routes
-Route::middleware(['auth', 'verified'])->group(function () {
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    /**
-     * a resource generates these routes
-     *
-    Verb          Path                        Action  Route Name
-    GET           /posts                      index   posts.index
-    GET           /posts/create               create  posts.create
-    POST          /posts                      store   posts.store
-    GET           /posts/{post}               show    posts.show
-    GET           /posts/{post}/edit          edit    posts.edit
-    PUT|PATCH     /posts/{post}               update  posts.update
-    DELETE        /posts/{post}               destroy posts.destroy */
-
-    Route::resource('posts', PostController::class);
-
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('/communities.posts', CommunityPostController::class);
+    Route::resource('/communities', CommunityController::class);
+   
+    Route::post('/posts/{post:slug}/upVote', [PostVoteController::class, 'upVote'])->name('posts.upVote');
+    Route::post('/posts/{post:slug}/downVote', [PostVoteController::class, 'downVote'])->name('posts.downVote');
 });
 
+
+
+require __DIR__ . '/auth.php';
