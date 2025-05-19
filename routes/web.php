@@ -11,6 +11,8 @@ use App\Http\Controllers\Frontend\WelcomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+// `routes/web.php`
+use App\Http\Controllers\PageController;
 
 
 Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
@@ -19,10 +21,11 @@ Route::get('/r/{slug}', [FrontendCommunityController::class, 'show'])->name('fro
 Route::get('/r/{community_slug}/posts/{post:slug}', [PostController::class, 'show'])->name('frontend.communities.posts.show');
 Route::post('/r/{community_slug}/posts/{post:slug}/comments', [PostCommentController::class, 'store'])->name('frontend.posts.comments');
 
+Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('/communities.posts', CommunityPostController::class);
     Route::resource('/communities', CommunityController::class);
-   
+
     Route::post('/posts/{post:slug}/upVote', [PostVoteController::class, 'upVote'])->name('posts.upVote');
     Route::post('/posts/{post:slug}/downVote', [PostVoteController::class, 'downVote'])->name('posts.downVote');
 });
