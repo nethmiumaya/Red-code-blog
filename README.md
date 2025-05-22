@@ -60,5 +60,5 @@ npm run dev
 ```
 
 ## License
- In here include [MIT License]([LICENSE](https://github.com/nethmiumaya/Red-code-blog/blob/main/LICENSE))
+ In here include ([LICENSE](https://github.com/nethmiumaya/Red-code-blog/blob/main/LICENSE))
 
